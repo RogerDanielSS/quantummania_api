@@ -1,0 +1,77 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String        @id @default(uuid())
+  name         String
+  email        String        @unique
+  password     String
+  level        Int           @default(1)
+  score        Int           @default(0)
+  createdAt    DateTime      @default(now())
+  achievements Achievement[]
+  phases       PhaseUser[]
+
+  PasswordResetToken PasswordResetToken[]
+  sessions          Session[] // <--- relação inversa para Session
+}
+
+model Phase {
+  id          String      @id @default(uuid())
+  title       String
+  description String
+  minLevel    Int
+  maxLevel    Int
+  users       PhaseUser[]
+  // Novos campos para suportar explicação e pergunta
+  type        String      // 'EXPLANATION' ou 'QUESTION'
+  text        String?     // Texto explicativo ou enunciado da pergunta
+  image       String?     // URL ou caminho da imagem
+  possibleAnswers String[] // Respostas possíveis (apenas para pergunta)
+  correctAnswer  String?  // Resposta correta (apenas para pergunta)
+
+  sessions          Session[] // <--- relação inversa para Session
+}
+
+model PhaseUser {
+  id             String   @id @default(uuid())
+  user           User     @relation(fields: [userId], references: [id])
+  userId         String
+  phase          Phase    @relation(fields: [phaseId], references: [id])
+  phaseId        String
+  completionTime Int
+  score          Int
+  completedAt    DateTime @default(now())
+}
+
+model Achievement {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  user        User     @relation(fields: [userId], references: [id])
+  userId      String
+  achievedAt  DateTime @default(now())
+}
+
+model PasswordResetToken {
+  token     String   @id
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  expiresAt DateTime
+}
+
+model Session {
+  id           String   @id @default(uuid())
+  user         User     @relation(fields: [userId], references: [id])
+  userId       String
+  currentPhase Phase?   @relation(fields: [currentPhaseId], references: [id])
+  currentPhaseId String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
