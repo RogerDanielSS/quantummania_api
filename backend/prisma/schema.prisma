@@ -22,21 +22,53 @@ model User {
   sessions          Session[] // <--- relação inversa para Session
 }
 
+enum LevelName {
+  Basic
+  Intermediate
+  Advanced
+}
+
+model Level {
+  id          String   @id @default(uuid())
+  name        LevelName @unique
+  description String?
+  phases      Phase[]
+}
+
+enum PhaseType {
+  explanation
+  quiz
+}
+
 model Phase {
-  id          String      @id @default(uuid())
+  id          String   @id @default(uuid())
   title       String
   description String
-  minLevel    Int
-  maxLevel    Int
-  users       PhaseUser[]
-  // Novos campos para suportar explicação e pergunta
-  type        String      // 'EXPLANATION' ou 'QUESTION'
-  text        String?     // Texto explicativo ou enunciado da pergunta
-  image       String?     // URL ou caminho da imagem
-  possibleAnswers String[] // Respostas possíveis (apenas para pergunta)
-  correctAnswer  String?  // Resposta correta (apenas para pergunta)
 
-  sessions          Session[] // <--- relação inversa para Session
+  // Relacionamento com usuários e sessões
+  users       PhaseUser[]
+  sessions    Session[]
+
+  // Tipo da fase: 'explanation' ou 'quiz'
+  type        PhaseType
+
+  // Campos comuns
+  text        String?
+  image       Bytes?
+
+  // Campos para explicação
+  secondText      String?
+  secondImage     Bytes?
+
+  // Campos para quiz
+  possibleResponses   String[] // alternativas do quiz
+  correctResponse    String?
+  responseJustificationText String?
+  responseJustificationImage Bytes?
+
+  // Relação com Level
+  level       Level    @relation(fields: [levelId], references: [id])
+  levelId     String
 }
 
 model PhaseUser {

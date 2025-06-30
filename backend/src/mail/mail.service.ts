@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const nodemailer = require('nodemailer');
 import { Transporter } from 'nodemailer';
 

@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from '../database/prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
@@ -65,10 +62,6 @@ export class AuthService {
       'Recuperação de senha',
       `Clique no link para redefinir sua senha: ${resetLink}`,
       `<p>Clique no link para redefinir sua senha: <a href="${resetLink}">${resetLink}</a></p>`,
-    );
-
-    console.log(
-      `E-mail enviado para ${email} com o link de redefinição de senha.`,
     );
 
     return { token, resetLink };

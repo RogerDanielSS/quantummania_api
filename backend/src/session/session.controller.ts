@@ -1,4 +1,4 @@
-import { Controller, Post, Patch, Body, Param } from '@nestjs/common';
+import { Controller, Get, Param, Body, Post } from '@nestjs/common';
 import { SessionService } from './session.service';
 
 @Controller('session')
@@ -10,11 +10,18 @@ export class SessionController {
     return this.sessionService.create(body.userId, body.currentPhaseId);
   }
 
-  @Patch(':id/phase')
-  updatePhase(
-    @Param('id') sessionId: string,
-    @Body('phaseId') phaseId: string,
-  ) {
-    return this.sessionService.updatePhase(sessionId, phaseId);
+  @Post('set-current-phase')
+  async setCurrentPhase(@Body() body: { userId: string; phaseId: string }) {
+    return await this.sessionService.setCurrentPhase(body.userId, body.phaseId);
+  }
+
+  @Get('current-phase/:userId')
+  async getCurrentPhase(@Param('userId') userId: string) {
+    return await this.sessionService.getCurrentPhaseByUser(userId);
+  }
+
+  @Get('levels')
+  async getAllLevels() {
+    return await this.sessionService.getAllLevels();
   }
 }
