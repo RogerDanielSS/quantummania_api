@@ -16,12 +16,22 @@ const prisma = new PrismaClient();
 async function main() {
   // Cria o Level Básico
   const basicLevel = await prisma.level.upsert({
-    where: { id: 'basic' }, // Use the unique 'id' field; replace 'basic' with the actual id if different
+    where: { name: LevelName.Basic }, // Corrigido: busca pelo campo único 'name'
     update: {},
     create: {
-      id: 'basic', // Ensure the id matches the where clause
+      id: 'basic',
       name: LevelName.Basic,
       description: 'Familiarização com conceitos de computação quântica',
+    },
+  });
+
+  const intermediateLevel = await prisma.level.upsert({
+    where: { name: LevelName.Intermediate }, // Corrigido: busca pelo campo único 'name'
+    update: {},
+    create: {
+      id: 'intermediate',
+      name: LevelName.Intermediate,
+      description: 'Aprofundamento em alguns conceitos de computação quântica',
     },
   });
 
@@ -102,6 +112,72 @@ async function main() {
         possibleResponses: ['-|0⟩', '|1⟩', '-|1⟩', '|0⟩'],
         correctResponse: '-|0⟩',
         levelId: basicLevel.id,
+      },
+      {
+        title: 'Normalização de estado quântico',
+        description: 'Quiz sobre estados quânticos normalizados',
+        type: PhaseType.quiz,
+        text: 'Qual é o valor de |a|² + |b|² para qualquer estado quântico normalizado?',
+        possibleResponses: ['0', '2', '√2', '1'],
+        correctResponse: '1',
+        responseJustificationText:
+          'Um estado quântico normalizado satisfaz a condição |a|² + |b|² = 1, garantindo que a soma das probabilidades seja igual a 1.',
+        levelId: intermediateLevel.id,
+      },
+      {
+        title: 'Probabilidade de medição',
+        description: 'Quiz sobre medida em qubit',
+        type: PhaseType.quiz,
+        text: 'Se |ψ⟩ = (1/√2)|0⟩ + (1/√2)|1⟩, qual a probabilidade de medir o qubit como |0⟩?',
+        possibleResponses: ['1', '0', '√2/2', '0.5'],
+        correctResponse: '0.5',
+        responseJustificationText:
+          'A probabilidade de medir |0⟩ é dada por |1/√2|² = 1/2 = 0.5.',
+        levelId: intermediateLevel.id,
+      },
+      {
+        title: 'Fase da porta Z',
+        description: 'Quiz sobre porta Z',
+        type: PhaseType.quiz,
+        text: 'A porta Z aplica uma fase de quantos graus?',
+        possibleResponses: ['90', '45', '270', '180'],
+        correctResponse: '180',
+        responseJustificationText:
+          'A porta Z inverte a fase do estado |1⟩, aplicando uma fase de 180 graus (ou π radianos).',
+        levelId: intermediateLevel.id,
+      },
+      {
+        title: 'Fase da porta T',
+        description: 'Quiz sobre porta T',
+        type: PhaseType.quiz,
+        text: 'A porta T aplica uma fase de quantos graus?',
+        possibleResponses: ['30', '90', '60', '45'],
+        correctResponse: '45',
+        responseJustificationText:
+          'A porta T aplica uma fase de π/4 radianos, equivalente a 45 graus.',
+        levelId: intermediateLevel.id,
+      },
+      {
+        title: 'Hadamard em |0⟩',
+        description: 'Quiz sobre aplicação de Hadamard',
+        type: PhaseType.quiz,
+        text: 'Após Hadamard em |0⟩, qual o coeficiente de |1⟩ no estado resultante?',
+        possibleResponses: ['0', '1', '-1/√2', '1/√2'],
+        correctResponse: '1/√2',
+        responseJustificationText:
+          'H|0⟩ = (|0⟩ + |1⟩)/√2. Portanto, o coeficiente de |1⟩ é 1/√2.',
+        levelId: intermediateLevel.id,
+      },
+      {
+        title: 'Soma de estados Hadamard',
+        description: 'Quiz sobre superposição',
+        type: PhaseType.quiz,
+        text: 'Se |ψ⟩ = H|0⟩ e |φ⟩ = H|1⟩, então |ψ⟩ + |φ⟩ resulta em qual estado?',
+        possibleResponses: ['|1⟩', '(|0⟩ + |1⟩)/√2', '0', '|0⟩'],
+        correctResponse: '|0⟩',
+        responseJustificationText:
+          'H|0⟩ = (|0⟩ + |1⟩)/√2 e H|1⟩ = (|0⟩ - |1⟩)/√2. Somando: (|0⟩ + |1⟩ + |0⟩ - |1⟩)/√2 = 2|0⟩/√2 = √2|0⟩ (normalizável).',
+        levelId: intermediateLevel.id,
       },
     ],
     skipDuplicates: true,
